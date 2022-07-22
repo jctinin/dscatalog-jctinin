@@ -37,4 +37,14 @@ public class CategoryService {
 		return new CategoryDTO(entity);
 	}
 
+	@Transactional(readOnly = true)
+	public CategoryDTO insert(CategoryDTO category) {
+
+		Category entity = new Category();
+		entity.setName(category.getName());
+		entity = repository.save(entity);
+		
+		return new CategoryDTO(entity);
+	}
+
 }
