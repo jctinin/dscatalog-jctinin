@@ -17,7 +17,7 @@ import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 public class ResourceExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class) // Necessário para tratar a exceção interceptada no controller,
-														// veja que vai tratar exceção do tipo EntityNotFoundException
+													   // veja que vai tratar exceção do tipo EntityNotFoundException
 	public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException e, HttpServletRequest request) { // Retorna
 																													// um
 																													// response

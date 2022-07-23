@@ -1,14 +1,14 @@
 package com.devsuperior.dscatalog.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +25,11 @@ public class CategoryService {
 	private CategoryRepository repository;
 
 	@Transactional(readOnly = true)
-	public List<CategoryDTO> findAll() {
+	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest) {
 
-		List<Category> list = repository.findAll();
+		Page<Category> list = repository.findAll(pageRequest);
 
-		return list.stream().map(cat -> new CategoryDTO(cat)).collect(Collectors.toList());
+		return list.map(cat -> new CategoryDTO(cat));
 
 	}
 
@@ -52,14 +52,13 @@ public class CategoryService {
 		return new CategoryDTO(entity); // retorna o dto com os dados retornados do save convertendo em dto novamente.
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public CategoryDTO update(Long id, CategoryDTO category) {
 		try {
 
 			Category entity = repository.getReferenceById(id);
 			entity.setName(category.getName());
 			entity = repository.save(entity);
-
 			return new CategoryDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id {id} not found");
