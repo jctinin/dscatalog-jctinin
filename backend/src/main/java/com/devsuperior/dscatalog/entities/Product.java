@@ -104,7 +104,7 @@ public class Product implements Serializable {
 		Date = date;
 	}
 	
-	public Set<Category> getCategory() {
+	public Set<Category> getCategories() {
 		return this.categories;
 	}
 

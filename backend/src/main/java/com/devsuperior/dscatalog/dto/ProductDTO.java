@@ -75,6 +75,18 @@ public class ProductDTO implements Serializable {
 		return price;
 	}
 
+	public List<CategoryDTO> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<CategoryDTO> categories) {
+		this.categories = categories;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public void setPrice(Double price) {
 		this.price = price;
 	}
