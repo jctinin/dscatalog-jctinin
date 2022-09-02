@@ -1,18 +1,24 @@
 package com.devsuperior.dscatalog.services;
 
+
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.devsuperior.dscatalog.repositories.ProductRepository;
+import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 
 @ExtendWith(SpringExtension.class)
+@DataJpaTest
 public class ProductServiceTests {
 
 	@InjectMocks
@@ -33,7 +39,8 @@ public class ProductServiceTests {
 		Mockito.doThrow(EmptyResultDataAccessException.class).when(productRepository).deleteById(nonExistingId);
 		
 	}
-
+	
+	@Test
 	@DisplayName("Verifica se o método delete não lança erro caso o ID seja válido.")
 	public void deleteShouldDoNothingWhenIdExists() {
 
@@ -43,6 +50,16 @@ public class ProductServiceTests {
 
 		Mockito.verify(productRepository, Mockito.times(1)).deleteById(existingId);
 		
+	}
+	
+	@Test
+	@DisplayName("Método delete deve enviar uma exceção quando o id não existe")
+	public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
+		Assertions.assertThrows(DatabaseException.class, ()-> {
+			productService.delete(nonExistingId);
+		});
+		
+		Mockito.verify(productRepository, Mockito.times(1)).deleteById(nonExistingId);
 	}
 
 }
