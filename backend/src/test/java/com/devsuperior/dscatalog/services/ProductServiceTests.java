@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -55,7 +56,7 @@ public class ProductServiceTests {
 	@Test
 	@DisplayName("Método delete deve enviar uma exceção quando o id não existe")
 	public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
-		Assertions.assertThrows(DatabaseException.class, ()-> {
+		Assertions.assertThrows(ResourceNotFoundException.class, ()-> {
 			productService.delete(nonExistingId);
 		});
 		
