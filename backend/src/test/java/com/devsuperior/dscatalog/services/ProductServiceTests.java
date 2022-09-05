@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -30,14 +31,18 @@ public class ProductServiceTests {
 
 	private long existingId;
 	private long nonExistingId;
+	private long dependentId;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		existingId = 1L;
 		nonExistingId = 1000L;
+		dependentId = 4L;
+		
 		
 		Mockito.doNothing().when(productRepository).deleteById(existingId);
 		Mockito.doThrow(EmptyResultDataAccessException.class).when(productRepository).deleteById(nonExistingId);
+		Mockito.doThrow(DataIntegrityViolationException.class).when(productRepository).deleteById(dependentId);
 		
 	}
 	
@@ -48,7 +53,7 @@ public class ProductServiceTests {
 		Assertions.assertDoesNotThrow(() -> {
 			productService.delete(existingId);
 		});
-
+	
 		Mockito.verify(productRepository, Mockito.times(1)).deleteById(existingId);
 		
 	}
@@ -61,6 +66,15 @@ public class ProductServiceTests {
 		});
 		
 		Mockito.verify(productRepository, Mockito.times(1)).deleteById(nonExistingId);
+	}
+	
+	@Test
+	@DisplayName("Método delete deve lançar exeção ao tentar remover um id vinculado a outro")
+	public void deleteShouldThrowDatabaseException() {
+		Assertions.assertThrows(DatabaseException.class, () -> {
+			productService.delete(dependentId);
+		});
+		Mockito.verify(productRepository, Mockito.times(1)).deleteById(dependentId);
 	}
 
 }
